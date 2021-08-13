@@ -1,0 +1,34 @@
+name: CI
+on:
+  push:
+    branches:
+      - master  # Set a branch to deploy
+
+jobs:
+  deploy:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Git Checkout
+        uses: actions/checkout@v2.3.4
+      - name: Update Theme
+        run: git submodule update --init --recursive
+      - name: Setup Hugo
+        uses: peaceiris/actions-hugo@v2.4.13
+        with:
+          hugo-version: 'latest'
+          # extended: true
+      - name: Build
+        run: hugo --minify
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3.7.3
+        with:
+          #Error: Action failed with "The generated GITHUB_TOKEN (github_token) does not support to push to an external repository.
+          #github_token: ${{ secrets.GITHUB_TOKEN }}
+          #When you use deploy_key, set your private key to the repository which includes this action and set your public key to your external repository.
+          # deploy_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
+          personal_token: ${{ secrets.PERSONAL_TOKEN }}
+          external_repository: deepshikha1590/deepshikha.github.io
+          publish_dir: ./public
+          user_name: 'deepshikha1590'
+          user_email: 'meshikha15@gmail.com'
+          publish_branch: master
